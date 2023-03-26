@@ -2,27 +2,16 @@
 #include <string.h>
 #include "./utilities/utilities.h"
 
-char BASE64_TABLE[64]; 
-
-void populate_table(int *index, const char begin, const char end)
-{
-    char curr_char = begin;
-    for (; curr_char <= end; (*index)++) {
-        BASE64_TABLE[(*index)] = curr_char++;
-    }
-}
-
-void init_base64_table()
-{
-    int i = 0;
-
-    populate_table(&i, 'A', 'Z');
-    populate_table(&i, 'a', 'z');
-    populate_table(&i, '0', '9');
-
-    BASE64_TABLE[i++] = '+';
-    BASE64_TABLE[i] = '/';
-}
+const char BASE64_TABLE[] = {
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+    'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+    'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+    'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+    'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+    'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+    'w', 'x', 'y', 'z', '0', '1', '2', '3',
+    '4', '5', '6', '7', '8', '9', '+', '/'
+};
 
 char *decode_hexstring(const char *str)
 {
@@ -39,9 +28,6 @@ char *decode_hexstring(const char *str)
     }
     return NULL;
 }
-
-
-
 
 int main()
 {
