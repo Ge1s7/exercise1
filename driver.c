@@ -1,15 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
+#include "./utilities/utilities.h"
 
 char BASE64_TABLE[64]; 
-
-unsigned long char_to_hex(const char c)
-{
-    char str[] = { c , '\0' };
-    return strtoul(str, NULL, 16);
-}
 
 void populate_table(int *index, const char begin, const char end)
 {
@@ -17,21 +10,6 @@ void populate_table(int *index, const char begin, const char end)
     for (; curr_char <= end; (*index)++) {
         BASE64_TABLE[(*index)] = curr_char++;
     }
-}
-
-unsigned char bot2(unsigned char halfword)
-{
-    return halfword & 0x03;
-}
-
-unsigned char mid2(unsigned char halfword)
-{
-    return halfword & 0x0c;
-}
-
-unsigned char top4(unsigned char halfword)
-{
-    return halfword & 0xf0;
 }
 
 void init_base64_table()
@@ -44,11 +22,6 @@ void init_base64_table()
 
     BASE64_TABLE[i++] = '+';
     BASE64_TABLE[i] = '/';
-}
-
-bool padding_required(size_t str_length)
-{
-    return (str_length * 8) % 6 != 0;
 }
 
 char *decode_hexstring(const char *str)
@@ -64,13 +37,10 @@ char *decode_hexstring(const char *str)
     {
         // TODO: The thing.
     }
-    
+    return NULL;
 }
 
-bool is_even (size_t len)
-{
-    return len % 2 == 0; 
-}
+
 
 
 int main()
