@@ -1,2 +1,5 @@
-base64:
-	gcc -std=c11 -c base64.c
+base64: queue.o
+	gcc -nostdlib -std=c11 -r queue.o base64.c -o base64.o
+
+queue.o:
+	gcc -std=c11 -c queue.c
