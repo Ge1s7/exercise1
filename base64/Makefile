@@ -3,3 +3,6 @@ base64: queue.o
 
 queue.o:
 	gcc -std=c11 -c queue.c
+
+clean:
+	rm base64.o	queue.o

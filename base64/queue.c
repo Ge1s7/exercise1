@@ -1,41 +1,41 @@
-
 #include "queue.h"
 
-void queue_init(Queue *queue)
+void queue_init(Queue *q)
 {
-    queue->front = NULL;
-    queue->rear = NULL;
+	q->front = NULL;
+	q->rear = NULL;
 }
 
-void push(Queue *queue, void *data)
+void push(Queue *q, void *data)
 {
-    Node *new_node = (Node*) malloc(sizeof(Node));
-    new_node->data = data;
-    new_node->next = NULL;
-    
-    if(queue->rear == NULL) {
-        queue->front = new_node;
-        queue->rear = new_node;
-        return;
-    }
-    
-    queue->rear->next = new_node;
-    queue->rear = new_node;
+	Node *new_node = (Node*) malloc(sizeof(Node));
+	new_node->data = data;
+	new_node->next = NULL;
+
+	if(q->rear == NULL) {
+		q->front = new_node;
+		q->rear = new_node;
+		return;
+	}
+
+	q->rear->next = new_node;
+	q->rear = new_node;
 }
 
-void *pop(Queue *queue)
+void *pop(Queue *q)
 {
-    if (queue->front == NULL) {
-        return NULL;
-    }
+	if (q->front == NULL) {
+		return NULL;
+	}
 
-    Node *temp_node = queue->front;
-    void *data = temp_node->data;
-    queue->front = temp_node->next;
+	Node *temp_node = q->front;
+	void *data = temp_node->data;
+	q->front = temp_node->next;
 
-    if (queue->front == NULL)
-        queue->rear = NULL;
+	if (q->front == NULL) {
+		q->rear = NULL;
+	}
 
-    free(temp_node);
-    return data;
+	free(temp_node);
+	return data;
 }

@@ -12,13 +12,13 @@ int main()
 	const char *result1 = hex_to_base64(test_str_1);
 	// assert(strcmp("TQ", result1) == 0);
 
-	// const char *result2 = hex_to_base64(test_str_2);
+	const char *result2 = hex_to_base64(test_str_2);
 	// assert(strcmp("TWE", result2) == 0);
 
-	// const char *result3 = hex_to_base64(test_str_3);
+	//const char *result3 = hex_to_base64(test_str_3);
 	// assert(strcmp("TWFu", result3) == 0);
 
-	// const char *result4 = hex_to_base64(test_str_4);
+	//const char *result4 = hex_to_base64(test_str_4);
 	// assert(strcmp("SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t", result4) == 0);
 
 	return 0;
