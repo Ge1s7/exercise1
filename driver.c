@@ -9,10 +9,13 @@ int main()
 	const char test_str_3[] = "Man";
 	const char test_str_4[] = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
 
-	const char *result1 = hex_to_base64(test_str_1);
-	// assert(strcmp("TQ", result1) == 0);
+	const size_t BUFFER_SIZE = 255;
+	char result1[BUFFER_SIZE];
+	hex_to_base64(test_str_1, result1, sizeof(result1));
+	// assert(strcmp("TQ", result1) ==s 0);
 
-	const char *result2 = hex_to_base64(test_str_2);
+	char result2[BUFFER_SIZE];
+	hex_to_base64(test_str_2, result2, BUFFER_SIZE);
 	// assert(strcmp("TWE", result2) == 0);
 
 	//const char *result3 = hex_to_base64(test_str_3);
