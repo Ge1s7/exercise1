@@ -4,10 +4,12 @@ void queue_init(Queue *q)
 {
 	q->front = NULL;
 	q->rear = NULL;
+	q->size = 0;
 }
 
 void push(Queue *q, void *data)
 {
+	q->size++;
 	Node *new_node = (Node*) malloc(sizeof(Node));
 	new_node->data = data;
 	new_node->next = NULL;
@@ -36,6 +38,7 @@ void *pop(Queue *q)
 		q->rear = NULL;
 	}
 
+	q->size--;
 	free(temp_node);
 	return data;
 }

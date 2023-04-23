@@ -8,6 +8,7 @@ typedef struct Node {
 typedef struct Queue {
 	Node *front;
 	Node *rear;
+	int size;
 } Queue;
 
 void queue_init(Queue *q);
