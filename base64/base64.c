@@ -18,6 +18,7 @@ const char BASE64_ALPHABET[] = {
 	'4', '5', '6', '7', '8', '9', '+', '/'
 };
 
+// not thread safe
 void enqueue_bits(const char *hex_str, Queue *q)
 {
 	unsigned char lo2 = 0x03;
@@ -55,10 +56,10 @@ void enqueue_bits(const char *hex_str, Queue *q)
 
 void print_bits(Queue q)
 {
-	printf("%#x ", ((bitfield_width2*) pop(&q))->data);
-	printf("%#x ", ((bitfield_width2*) pop(&q))->data);
-	printf("%#x ", ((bitfield_width2*) pop(&q))->data);
-	printf("%#x\n", ((bitfield_width2*) pop(&q))->data);
+	while (q.size != 0) {
+		printf("%#x ", ((bitfield_width2*) pop(&q))->data);
+	}
+	puts("");
 }
 
 void perror_and_gtfo(size_t base64_strlen, size_t buffer_size)
@@ -73,8 +74,7 @@ void perror_and_gtfo(size_t base64_strlen, size_t buffer_size)
 
 void hex_to_base64(const char *hex_str, char *buffer, size_t buffer_size) 
 {
-	size_t hex_strlen = strlen(hex_str);
-	size_t base64_strlen = ceil(hex_strlen * 1.5);
+	const size_t base64_strlen = ceil(strlen(hex_str) * 1.5);
 
 	if (buffer_size < base64_strlen) {
 		perror_and_gtfo(base64_strlen, buffer_size);
@@ -83,5 +83,4 @@ void hex_to_base64(const char *hex_str, char *buffer, size_t buffer_size)
 	Queue q;
 	queue_init(&q);
 	enqueue_bits(hex_str, &q);
-	print_bits(q);
 }

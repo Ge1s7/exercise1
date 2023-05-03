@@ -1,1 +1,1 @@
-const char *hex_to_base64(const char *hex_string);
+void hex_to_base64(const char *hex_string, char *buffer, size_t buffer_size);
