@@ -6,6 +6,7 @@
 #include "queue.h"
 
 typedef struct { unsigned char data : 2; } bitfield_width2;
+typedef struct { unsigned char upper_half : 4, lower_half : 4; } split_char;
 
 const char BASE64_ALPHABET[] = {
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
@@ -18,12 +19,6 @@ const char BASE64_ALPHABET[] = {
 	'4', '5', '6', '7', '8', '9', '+', '/'
 };
 
-unsigned long ascii_to_hex(const char c)
-{
-	char str[] = { c , '\0' };
-	return strtoul(str, NULL, 16);
-}
-
 bitfield_width2 pop_and_free(Queue *q)
 {
 	bitfield_width2 *temp = pop(&(*q));
@@ -33,25 +28,19 @@ bitfield_width2 pop_and_free(Queue *q)
 }
 
 // This assumes a big-endian processor is executing this code.
-// TODO: Make this code architecure agnostic.
+// TODO: Make this code architecture agnostic.
 void enqueue_bits(const char *hex_str, Queue *q)
 {
-	for(int i = 0; i < strlen(hex_str); i++) {
-		bitfield_width2 *upper_two = malloc(sizeof(bitfield_width2));
-		bitfield_width2 *himid_two = malloc(sizeof(bitfield_width2));
-		bitfield_width2 *lomid_two = malloc(sizeof(bitfield_width2));
-		bitfield_width2 *lower_two = malloc(sizeof(bitfield_width2));
+    const unsigned char mask = 0b11;
+    const int shifts[] = {6, 4, 2, 0};
 
-		upper_two->data = (hex_str[i] & 0b11000000) >> 6;
-		himid_two->data = (hex_str[i] & 0b00110000) >> 4;
-		lomid_two->data = (hex_str[i] & 0b00001100) >> 2;
-		lower_two->data = hex_str[i] & 0b00000011;
-
-		push(q, &(*upper_two));
-		push(q, &(*himid_two));
-		push(q, &(*lomid_two));
-		push(q, &(*lower_two));
-	}
+    for (int i = 0; i < strlen(hex_str); i++) {
+        for (int j = 0; j < 4; j++) {
+            bitfield_width2 *bitfield = malloc(sizeof(bitfield_width2));
+            bitfield->data = (hex_str[i] >> shifts[j]) & mask;
+            push(q, &(*bitfield));
+        }
+    }
 }
 
 // void print_bits(Queue q)
