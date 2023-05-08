@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 typedef struct Node {
-	void* data;
+	void *data;
 	struct Node *next;
 } Node;
 
