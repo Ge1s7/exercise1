@@ -1,10 +1,8 @@
 #include "queue.h"
 
-void queue_init(Queue *q)
+Queue new_queue()
 {
-	q->front = NULL;
-	q->rear = NULL;
-	q->size = 0;
+	return (Queue) { .front = NULL, .rear = NULL, .size = 0 };
 }
 
 void push(Queue *q, void *data)

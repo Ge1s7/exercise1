@@ -4,11 +4,10 @@
 
 int main()
 {
-	const char test_str_1[] = "M";
-	const char test_str_2[] = "Ma";
-	const char test_str_3[] = "Man";
-	const char test_str_4[] = "I'";
-	//const char test_str_4[] = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
+	const char test_str_1[] = "4d";
+	const char test_str_2[] = "4d61";
+	const char test_str_3[] = "4d616e";
+	const char test_str_4[] = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
 
 	const size_t BUFFER_SIZE = 255;
 	char result1[BUFFER_SIZE];

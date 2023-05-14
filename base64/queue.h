@@ -6,11 +6,10 @@ typedef struct Node {
 } Node;
 
 typedef struct Queue {
-	Node *front;
-	Node *rear;
+	Node *front, *rear;
 	int size;
 } Queue;
 
-void queue_init(Queue *q);
 void push(Queue *q, void *data);
 void *pop(Queue *q);
+Queue new_queue();

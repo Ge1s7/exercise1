@@ -1,12 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <math.h>
-#include <errno.h>
 #include "queue.h"
 
-typedef struct { unsigned char data : 2; } bitfield_width2;
-typedef struct { unsigned char upper_half : 4, lower_half : 4; } split_char;
+// ancient programming meme: https://mathworld.wolfram.com/Crumb.html
+typedef struct { unsigned char val : 2; } crumb;
 
 const char BASE64_ALPHABET[] = {
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
@@ -19,74 +17,68 @@ const char BASE64_ALPHABET[] = {
 	'4', '5', '6', '7', '8', '9', '+', '/'
 };
 
-bitfield_width2 pop_and_free(Queue *q)
+unsigned long char_to_hex(const char c)
 {
-	bitfield_width2 *temp = pop(&(*q));
-	bitfield_width2 bitfield = {.data = temp->data};
+	char str[] = { c , '\0' };
+	return strtoul(str, NULL, 16);
+}
+
+void hexstr_to_hexarr(const char *hexstr, int *buf)
+{
+	for(int i = 0; i < strlen(hexstr); i++) {
+		buf[i] = char_to_hex(hexstr[i]);
+	}
+}
+
+crumb pop_and_free(Queue *q)
+{
+	crumb *temp = pop(&(*q));
+	crumb retval = { .val = temp->val };
 	free(temp);
-	return bitfield;
+	return retval;
 }
 
 // This assumes a big-endian processor is executing this code.
-// TODO: Make this code architecture agnostic.
-void enqueue_bits(const char *hex_str, Queue *q)
+void enqueue_bits(int *hexarr, size_t arr_size, Queue *q)
 {
-    const unsigned char mask = 0b11;
-    const int shifts[] = {6, 4, 2, 0};
+	const unsigned char mask = 0b11;
+	const int shifts[] = {2, 0};
 
-    for (int i = 0; i < strlen(hex_str); i++) {
-        for (int j = 0; j < 4; j++) {
-            bitfield_width2 *bitfield = malloc(sizeof(bitfield_width2));
-            bitfield->data = (hex_str[i] >> shifts[j]) & mask;
-            push(q, &(*bitfield));
-        }
-    }
+	for (int i = 0; i < arr_size; i++) {
+		for (int j = 0; j < 2; j++) {
+			crumb *_crumb = malloc(sizeof(crumb));
+			_crumb->val = (hexarr[i] >> shifts[j]) & mask;
+			push(q, &(*_crumb));
+		}
+	}
 }
-
-// void print_bits(Queue q)
-// {
-// 	while(q.size != 0) {
-// 		printf("%#x ", pop_and_free(q).data);
-// 	}
-// 	puts("");
-// }
 
 char extract_six(Queue *q)
 {
 	unsigned char index = 0;
 
-	index |= pop_and_free(q).data;
+	index |= pop_and_free(q).val;
 	index <<= 2;
-	index |= pop_and_free(q).data;
+	index |= pop_and_free(q).val;
 	index <<= 2;
-	index |= pop_and_free(q).data;
+	index |= pop_and_free(q).val;
+
+	if(q->size >= 3) {
+	}
+	else {
+
+	}
 
 	return BASE64_ALPHABET[index];
 }
 
-void perror_and_gtfo(size_t base64str_len, size_t buffer_size)
+void hex_to_base64(const char *hexstr, char *buffer, size_t buf_size)
 {
-	char fmt[] = "Buffer size not large enough for conversion. Required length: %d. Given length: %d.\n";
-	char err_msg[128];
-	sprintf(err_msg, fmt, base64str_len, buffer_size);
-	errno = EINVAL;
-	perror(err_msg);
-	exit(errno);
-}
+	const size_t hexstr_length = strlen(hexstr);
+	int hexarr[hexstr_length];
+	Queue q = new_queue();
 
-void hex_to_base64(const char *hex_str, char *buffer, size_t buffer_size) 
-{
-	//printf("string val == %s\n", hex_str);
-	const size_t base64_strlen = ceil(strlen(hex_str) * 1.5);
-	if(buffer_size < base64_strlen) {
-		perror_and_gtfo(base64_strlen, buffer_size);
-	}
-
-	Queue q;
-	queue_init(&q);
-	enqueue_bits(hex_str, &q);
-
-
-	printf("%c", extract_six(&q));
-	puts("");
+	hexstr_to_hexarr(hexstr, hexarr);
+	enqueue_bits(hexarr, hexstr_length, &q);
+	printf("%c\n", extract_six(&q));
 }
