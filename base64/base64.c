@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include "queue.h"
 
 // ancient programming meme: https://mathworld.wolfram.com/Crumb.html
@@ -39,7 +38,7 @@ crumb pop_and_free(Queue *q)
 }
 
 // This assumes a big-endian processor is executing this code.
-void enqueue_bits(int *hexarr, size_t arr_size, Queue *q)
+void enqueue_crumbs(int *hexarr, size_t arr_size, Queue *q)
 {
 	const unsigned char mask = 0b11;
 	const int shifts[] = {2, 0};
@@ -53,32 +52,31 @@ void enqueue_bits(int *hexarr, size_t arr_size, Queue *q)
 	}
 }
 
-char extract_six(Queue *q)
+char crumbs_to_base64(Queue *q)
 {
-	unsigned char index = 0;
+	char index = 0;
+	int n = q->size >= 3 ? 3 : q->size;
+	const int shifts[] = {4,2,0};
 
-	index |= pop_and_free(q).val;
-	index <<= 2;
-	index |= pop_and_free(q).val;
-	index <<= 2;
-	index |= pop_and_free(q).val;
-
-	if(q->size >= 3) {
+	for(int i = 0; i < n; i++) {
+		index |= pop_and_free(q).val << shifts[i];
 	}
-	else {
-
-	}
-
 	return BASE64_ALPHABET[index];
 }
 
-void hex_to_base64(const char *hexstr, char *buffer, size_t buf_size)
+void hex_to_base64(const char *src, char *dst, size_t len)
 {
-	const size_t hexstr_length = strlen(hexstr);
+	const size_t hexstr_length = strlen(src);
 	int hexarr[hexstr_length];
 	Queue q = new_queue();
 
-	hexstr_to_hexarr(hexstr, hexarr);
-	enqueue_bits(hexarr, hexstr_length, &q);
-	printf("%c\n", extract_six(&q));
+	hexstr_to_hexarr(src, hexarr);
+	enqueue_crumbs(hexarr, hexstr_length, &q);
+	memset(dst, 0, len);
+
+	int i;
+	for(i = 0; q.size != 0; i++) {
+		dst[i] = crumbs_to_base64(&q);
+	}
+	dst[i + 1] = '\0';
 }
