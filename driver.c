@@ -12,19 +12,19 @@ int main()
 	const size_t BUFFER_SIZE = 255;
 	char result1[BUFFER_SIZE];
 	hex_to_base64(test_str_1, result1, sizeof(result1));
-	// assert(strcmp("TQ", result1) == 0);
+	assert(strcmp("TQ", result1) == 0);
 
 	char result2[BUFFER_SIZE];
 	hex_to_base64(test_str_2, result2, sizeof(result2));
-	// assert(strcmp("TWE", result2) == 0);
+	assert(strcmp("TWE", result2) == 0);
 
 	char result3[BUFFER_SIZE];
 	hex_to_base64(test_str_3, result3, sizeof(result3));
-	// assert(strcmp("TWFu", result3) == 0);
+	assert(strcmp("TWFu", result3) == 0);
 
 	char result4[BUFFER_SIZE];
 	hex_to_base64(test_str_4, result4, sizeof(result4));
-	// assert(strcmp("SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t", result4) == 0);
+	assert(strcmp("SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t", result4) == 0);
 
 	return 0;
 }
