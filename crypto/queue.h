@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 typedef struct Node {
 	void *data;
 	struct Node *next;
