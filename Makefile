@@ -5,4 +5,4 @@ base64.o:
 	cd ./crypto && make base64
 
 clean:
-	rm driver ; cd ./base64 && make clean
+	rm driver ; cd ./crypto && make clean
