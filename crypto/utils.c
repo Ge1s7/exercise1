@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <ctype.h>
 #include <string.h>
 
 unsigned long char_to_hex(const char c)
