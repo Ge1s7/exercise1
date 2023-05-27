@@ -8,8 +8,10 @@ Queue new_queue()
 
 void push(Queue *q, void *data)
 {
-	q->size++;
 	Node *new_node = (Node*) malloc(sizeof(Node));
+	if (new_node) {
+		q->size++;
+	}
 	new_node->data = data;
 	new_node->next = NULL;
 

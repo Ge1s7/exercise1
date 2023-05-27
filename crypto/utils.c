@@ -12,34 +12,16 @@ char hex_to_char(int num)
 	char retval;
 	switch(num){
 		case 0x0:
-			retval = '0';
-			break;
 		case 0x1:
-			retval = '1';
-			break;
 		case 0x2:
-			retval = '2';
-			break;
 		case 0x3:
-			retval = '3';
-			break;
 		case 0x4:
-			retval = '4';
-			break;
 		case 0x5:
-			retval = '5';
-			break;
 		case 0x6:
-			retval = '6';
-			break;
 		case 0x7:
-			retval = '7';
-			break;
 		case 0x8:
-			retval = '8';
-			break;
 		case 0x9:
-			retval = '9';
+			retval =  num + '0';
 			break;
 		case 0xa:
 			retval = 'a';
