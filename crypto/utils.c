@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 unsigned long char_to_hex(const char c)
 {
@@ -49,7 +50,19 @@ char hex_to_char(int num)
 
 void hexstr_to_hexarr(const char *hexstr, int *buf)
 {
-	for(int i = 0; i < strlen(hexstr); i++) {
+	for(int i = 0; i < strlen(hexstr); i++)
 		buf[i] = char_to_hex(hexstr[i]);
+}
+
+void hexstr_to_ascii(const char *hexstr, char *dest)
+{
+	unsigned int hexval;
+	int i;
+	size_t len = strlen(hexstr) / 2;
+
+	for(i = 0; i < len; i++) {
+		sscanf(hexstr + 2 * i, "%2x", &hexval);
+		dest[i] = hexval;
 	}
+	dest[i] = '\0';
 }
