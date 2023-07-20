@@ -1,7 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-#include <stdbool.h>
 #include "queue.h"
 #include "utils.h"
 
@@ -46,7 +44,7 @@ static char crumbs_to_base64(Queue *q)
 	return BASE64_ALPHABET[index];
 }
 
-int calculate_freq_score(const char *str)
+static int calculate_freq_score(const char *str)
 {
 	const char common_letters[] = "etaoinshrdlu";
 	int score = 0;
@@ -59,25 +57,39 @@ int calculate_freq_score(const char *str)
 
 static void build_cipher_str(char *cipher_str, size_t src_len, char letter)
 {
-		unsigned char upper_half = (letter >> 4) & 0xf;
-		unsigned char lower_half = letter & 0xf;
+	unsigned char upper_half = (letter >> 4) & 0xf;
+	unsigned char lower_half = letter & 0xf;
 
-		int i;
-		for(i = 0; i < src_len; i++) {
-			if(i % 2 == 0)
-				cipher_str[i] = hex_to_char(upper_half);
-			else
-				cipher_str[i] = hex_to_char(lower_half);
-		}
-		cipher_str[i] = '\0';
+	int i;
+	for(i = 0; i < src_len; i++) {
+		if(i % 2 == 0)
+			cipher_str[i] = hex_to_char(upper_half);
+		else
+			cipher_str[i] = hex_to_char(lower_half);
+	}
+	cipher_str[i] = '\0';
 }
 
-static char get_key(const char *hexstr, const size_t src_len)
+static int compare_guesses(const void *g1, const void *g2)
+{
+	Guess *guess1 = (Guess *) g1;
+	Guess *guess2 = (Guess *) g2;
+
+	if(guess1->freq_score > guess2->freq_score)
+		return 1;
+	else if(guess1->freq_score < guess2->freq_score)
+		return -1;
+	else
+		return 0;
+}
+
+static void decrypt_string(const char *hexstr, const size_t src_len, char *result)
 {
 	const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-	Guess guesses[strlen(alphabet)];
+	int num_guesses = strlen(alphabet);
+	Guess guesses[num_guesses];
 
-	for(int i = 0; i < strlen(alphabet); i++) {
+	for(int i = 0; i < num_guesses; i++) {
 		char cipher[src_len];
 		char decoded_hexarr[src_len];
 		char ascii_str[src_len];
@@ -85,15 +97,17 @@ static char get_key(const char *hexstr, const size_t src_len)
 		build_cipher_str(cipher, src_len, alphabet[i]);
 		strxor(hexstr, cipher, decoded_hexarr);
 		hexstr_to_ascii(decoded_hexarr, ascii_str);
+
 		guesses[i].str = malloc((sizeof(char) * strlen(ascii_str)) + 1);
 		strcpy(guesses[i].str, ascii_str);
 		guesses[i].freq_score = calculate_freq_score(ascii_str);
 	}
 
-	for(int i = 0; i < strlen(alphabet); i++) {
-		printf("%s\n", guesses[i].str);
-	}
+	qsort(guesses, num_guesses, sizeof(Guess), compare_guesses);
+	strcpy(result, guesses[num_guesses - 1].str);
 
+	for(int i = 0; i < num_guesses; i++)
+		free(guesses[i].str);
 }
 
 void hex_to_base64(const char *src, char *dst, size_t len)
@@ -129,16 +143,5 @@ void strxor(const char *src1, const char *src2, char *dst)
 
 void decode_xor_cipher(const char *src, char *result)
 {
-	const size_t src_len = strlen(src);
-	char key = get_key(src, src_len);
-
-	char cipher[src_len];
-	char decoded_hexarr[src_len];
-	char ascii_str[src_len];
-
-	build_cipher_str(cipher, src_len, key);
-	strxor(src, cipher, decoded_hexarr);
-	hexstr_to_ascii(decoded_hexarr, ascii_str);
-
-	printf("%s\n", ascii_str);
+	decrypt_string(src, strlen(src), result);
 }
