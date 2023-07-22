@@ -12,7 +12,7 @@ void strxor(const char *src1, const char *src2, char *dst);
 static Crumb pop_and_free(Queue *q)
 {
 	Crumb *temp = pop(&(*q));
-	Crumb retval = { .val = temp->val };
+	Crumb retval = { temp->val };
 	free(temp);
 	return retval;
 }
@@ -24,9 +24,9 @@ static void enqueue_crumbs(int *hexarr, size_t arr_size, Queue *q)
 
 	for(int i = 0; i < arr_size; i++) {
 		for (int j = 0; j < 2; j++) {
-			Crumb *_crumb = malloc(sizeof(Crumb));
-			_crumb->val = (hexarr[i] >> shifts[j]) & mask;
-			push(q, &(*_crumb));
+			Crumb *crumb = malloc(sizeof(Crumb));
+			crumb->val = (hexarr[i] >> shifts[j]) & mask;
+			push(q, &(*crumb));
 		}
 	}
 }
@@ -83,33 +83,6 @@ static int compare_guesses(const void *g1, const void *g2)
 		return 0;
 }
 
-static void decrypt_string(const char *hexstr, const size_t src_len, char *result)
-{
-	const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-	int num_guesses = strlen(alphabet);
-	Guess guesses[num_guesses];
-
-	for(int i = 0; i < num_guesses; i++) {
-		char cipher[src_len];
-		char decoded_hexarr[src_len];
-		char ascii_str[src_len];
-
-		build_cipher_str(cipher, src_len, alphabet[i]);
-		strxor(hexstr, cipher, decoded_hexarr);
-		hexstr_to_ascii(decoded_hexarr, ascii_str);
-
-		guesses[i].str = malloc((sizeof(char) * strlen(ascii_str)) + 1);
-		strcpy(guesses[i].str, ascii_str);
-		guesses[i].freq_score = calculate_freq_score(ascii_str);
-	}
-
-	qsort(guesses, num_guesses, sizeof(Guess), compare_guesses);
-	strcpy(result, guesses[num_guesses - 1].str);
-
-	for(int i = 0; i < num_guesses; i++)
-		free(guesses[i].str);
-}
-
 void hex_to_base64(const char *src, char *dst, size_t len)
 {
 	const size_t hexstr_length = strlen(src);
@@ -141,7 +114,29 @@ void strxor(const char *src1, const char *src2, char *dst)
 	}
 }
 
-void decode_xor_cipher(const char *src, char *result)
+void decode_xor_cipher(const char *src, size_t src_len, char *result)
 {
-	decrypt_string(src, strlen(src), result);
+	const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	int num_guesses = strlen(alphabet);
+	Guess guesses[num_guesses];
+
+	for(int i = 0; alphabet[i] != '\0'; i++) {
+		char cipher[src_len];
+		char decoded_hexarr[src_len];
+		char ascii_str[src_len];
+
+		build_cipher_str(cipher, src_len, alphabet[i]);
+		strxor(src, cipher, decoded_hexarr);
+		hexstr_to_ascii(decoded_hexarr, ascii_str);
+
+		guesses[i].str = malloc((sizeof(char) * strlen(ascii_str)) + 1);
+		strcpy(guesses[i].str, ascii_str);
+		guesses[i].freq_score = calculate_freq_score(ascii_str);
+	}
+
+	qsort(guesses, num_guesses, sizeof(Guess), compare_guesses);
+	strcpy(result, guesses[num_guesses - 1].str);
+
+	for(int i = 0; i < num_guesses; i++)
+		free(guesses[i].str);
 }

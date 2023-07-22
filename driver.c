@@ -2,7 +2,7 @@
 #include <assert.h>
 #include "crypto/set1.h"
 
-const size_t BUFFER_SIZE = 255;
+#define BUFFER_SIZE 255
 
 void base64()
 {
@@ -40,8 +40,9 @@ void fixed_xor()
 
 void decrypt_xored_string()
 {
-	char result[255];
-	decode_xor_cipher("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736", result);
+	char result[BUFFER_SIZE];
+	const char string_to_decode[] = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
+	decode_xor_cipher(string_to_decode, strlen(string_to_decode), result);
 	assert(strcmp(result, "Cooking MC's like a pound of bacon") == 0);
 }
 
